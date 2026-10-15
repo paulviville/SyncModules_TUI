@@ -31,3 +31,6 @@ button.del { color:var(--danger); }
 .prop small { display:block; color:var(--muted); font-size:13px; }
 .prop span { font-variant-numeric:tabular-nums; font-size:20px; }
 .empty { text-align:center; color:var(--muted); padding:60px 0; }
+
+.right { display:flex; align-items:center; gap:12px; }
+#fs { font-size:24px; }

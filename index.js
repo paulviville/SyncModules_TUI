@@ -1,0 +1,141 @@
+(() => {
+  // ---- Config: open page with ?ws=ws://host:port/path  (no param = demo mode)
+  const WS_URL = new URLSearchParams(location.search).get('ws');
+
+  // ---- State
+  const items = new Map();      // id -> { id, label, values:[f,f,f], parent }
+  const expanded = new Set();   // ids currently expanded
+  let ws = null;
+
+  // ---- Protocol (adapt to your server):
+  //  {"type":"add",    "id":"a1", "label":"Motor", "values":[1.5,2.0,3.25], "parent":"a0"}   (parent optional)
+  //  {"type":"remove", "id":"a1"}
+  //  {"type":"delete", "id":"a1"}   <- sent TO the server when the user taps delete
+  function handleMessage(msg) {
+    if (msg.type === 'add') {
+      items.set(String(msg.id), {
+        id: String(msg.id),
+        label: String(msg.label ?? ''),
+        values: (msg.values || []).slice(0, 3).map(Number),
+        parent: msg.parent != null ? String(msg.parent) : null
+      });
+    } else if (msg.type === 'remove') {
+      removeItem(String(msg.id));
+    }
+    render();
+  }
+
+  function removeItem(id) {            // removes item and its descendants
+    for (const it of [...items.values()]) if (it.parent === id) removeItem(it.id);
+    items.delete(id);
+    expanded.delete(id);
+  }
+
+  // ---- Rendering
+  const rootEl = document.getElementById('root');
+  const emptyEl = document.getElementById('empty');
+
+  function childrenOf(id) {
+    return [...items.values()].filter(i => i.parent === id);
+  }
+
+  function buildList(list) {
+    const ul = document.createElement('ul');
+    for (const it of list) {
+      const li = document.createElement('li');
+      li.dataset.id = it.id;
+      if (expanded.has(it.id)) li.classList.add('open');
+
+      const kids = childrenOf(it.id);
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = '<button class="exp" aria-label="Expand"><span class="caret">▶</span></button>' +
+                      '<span class="label"></span>' +
+                      (kids.length ? '<span class="count"></span>' : '') +
+                      '<button class="del" aria-label="Delete">✕</button>';
+      row.querySelector('.label').textContent = it.label;
+      if (kids.length) row.querySelector('.count').textContent = kids.length + ' child' + (kids.length > 1 ? 'ren' : '');
+      li.appendChild(row);
+
+      const props = document.createElement('div');
+      props.className = 'props';
+      ['Value 1', 'Value 2', 'Value 3'].forEach((name, i) => {
+        const p = document.createElement('div');
+        p.className = 'prop';
+        const v = it.values[i];
+        p.innerHTML = '<small></small><span></span>';
+        p.querySelector('small').textContent = name;
+        p.querySelector('span').textContent = Number.isFinite(v) ? v : '–';
+        props.appendChild(p);
+      });
+      li.appendChild(props);
+
+      if (kids.length) li.appendChild(buildList(kids));
+      ul.appendChild(li);
+    }
+    return ul;
+  }
+
+  function render() {
+    // roots = no parent, or parent not (yet) known
+    const roots = [...items.values()].filter(i => i.parent == null || !items.has(i.parent));
+    rootEl.replaceChildren(...buildList(roots).childNodes);
+    emptyEl.style.display = items.size ? 'none' : 'block';
+  }
+
+  // ---- User actions (event delegation)
+  rootEl.addEventListener('click', e => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    const id = li.dataset.id;
+    if (e.target.closest('.del')) {
+      removeItem(id);
+      if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'delete', id }));
+      render();
+    } else if (e.target.closest('.exp') || e.target.closest('.label')) {
+      expanded.has(id) ? expanded.delete(id) : expanded.add(id);
+      li.classList.toggle('open');
+    }
+  });
+
+  // ---- Connection
+  const statusEl = document.getElementById('status');
+  const setStatus = on => { statusEl.className = on ? 'on' : ''; statusEl.textContent = on ? 'connected' : 'offline'; };
+
+  function connect() {
+    ws = new WebSocket(WS_URL);
+    ws.onopen = () => setStatus(true);
+    ws.onmessage = e => { try { handleMessage(JSON.parse(e.data)); } catch (err) { console.error(err); } };
+    ws.onclose = () => { setStatus(false); setTimeout(connect, 2000); };   // auto-reconnect
+    ws.onerror = () => ws.close();
+  }
+
+  // ---- Demo mode: simulated server messages
+  function demo() {
+    statusEl.textContent = 'demo mode';
+    const r = () => +(Math.random() * 10).toFixed(2);
+    const script = [
+      { type:'add', id:'1', label:'Robot arm', values:[r(),r(),r()] },
+      { type:'add', id:'2', label:'Shoulder joint', values:[r(),r(),r()], parent:'1' },
+      { type:'add', id:'3', label:'Elbow joint', values:[r(),r(),r()], parent:'1' },
+      { type:'add', id:'4', label:'Gripper', values:[r(),r(),r()], parent:'3' },
+      { type:'add', id:'5', label:'Base', values:[r(),r(),r()] },
+      { type:'remove', id:'5' }
+    ];
+    script.forEach((m, i) => setTimeout(() => handleMessage(m), 800 * (i + 1)));
+  }
+
+  // ---- Full screen toggle (the Fullscreen API requires a user tap)
+  const fsBtn = document.getElementById('fs');
+  const root = document.documentElement;
+  const canFs = root.requestFullscreen || root.webkitRequestFullscreen;
+  if (!canFs) fsBtn.style.display = 'none';
+  fsBtn.addEventListener('click', () => {
+    const active = document.fullscreenElement || document.webkitFullscreenElement;
+    if (active) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    else (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+  });
+
+  render();
+  WS_URL ? connect() : demo();
+})();
