@@ -1,141 +1,75 @@
-(() => {
-  // ---- Config: open page with ?ws=ws://host:port/path  (no param = demo mode)
-  const WS_URL = new URLSearchParams(location.search).get('ws');
+import * as THREE from './three/three.module.js';
+import { OrbitControls } from './three/controls/OrbitControls.js';
+import SceneController from "./SceneController.js";
+import ClientManager from "./ClientManager.js";
 
-  // ---- State
-  const items = new Map();      // id -> { id, label, values:[f,f,f], parent }
-  const expanded = new Set();   // ids currently expanded
-  let ws = null;
 
-  // ---- Protocol (adapt to your server):
-  //  {"type":"add",    "id":"a1", "label":"Motor", "values":[1.5,2.0,3.25], "parent":"a0"}   (parent optional)
-  //  {"type":"remove", "id":"a1"}
-  //  {"type":"delete", "id":"a1"}   <- sent TO the server when the user taps delete
-  function handleMessage(msg) {
-    if (msg.type === 'add') {
-      items.set(String(msg.id), {
-        id: String(msg.id),
-        label: String(msg.label ?? ''),
-        values: (msg.values || []).slice(0, 3).map(Number),
-        parent: msg.parent != null ? String(msg.parent) : null
-      });
-    } else if (msg.type === 'remove') {
-      removeItem(String(msg.id));
-    }
-    render();
-  }
+const app = document.getElementById('app');
+const btnFs = document.getElementById('btn-fullscreen');
 
-  function removeItem(id) {            // removes item and its descendants
-    for (const it of [...items.values()]) if (it.parent === id) removeItem(it.id);
-    items.delete(id);
-    expanded.delete(id);
-  }
+function toggleSidebar() { app.classList.toggle('sidebar-hidden'); }   // canvas resizes via ResizeObserver
+function toggleFullscreen() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen().catch(err => console.warn(err));
+}
+document.getElementById('btn-sidebar').onclick = toggleSidebar;
+btnFs.onclick = toggleFullscreen;
+if (!document.documentElement.requestFullscreen) btnFs.style.display = 'none';   // e.g. iPhone Safari
+document.addEventListener('fullscreenchange', () => {
+  btnFs.textContent = document.fullscreenElement ? '✕' : '⛶';
+});
 
-  // ---- Rendering
-  const rootEl = document.getElementById('root');
-  const emptyEl = document.getElementById('empty');
+const viewport = document.getElementById('viewport');
+const sidebar = document.getElementById('sidebar');
 
-  function childrenOf(id) {
-    return [...items.values()].filter(i => i.parent === id);
-  }
+// const sceneController = new SceneController( viewport );
+// sceneController.startRender( )
 
-  function buildList(list) {
-    const ul = document.createElement('ul');
-    for (const it of list) {
-      const li = document.createElement('li');
-      li.dataset.id = it.id;
-      if (expanded.has(it.id)) li.classList.add('open');
+const clientManager = new ClientManager( );
 
-      const kids = childrenOf(it.id);
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.innerHTML = '<button class="exp" aria-label="Expand"><span class="caret">▶</span></button>' +
-                      '<span class="label"></span>' +
-                      (kids.length ? '<span class="count"></span>' : '') +
-                      '<button class="del" aria-label="Delete">✕</button>';
-      row.querySelector('.label').textContent = it.label;
-      if (kids.length) row.querySelector('.count').textContent = kids.length + ' child' + (kids.length > 1 ? 'ren' : '');
-      li.appendChild(row);
 
-      const props = document.createElement('div');
-      props.className = 'props';
-      ['Value 1', 'Value 2', 'Value 3'].forEach((name, i) => {
-        const p = document.createElement('div');
-        p.className = 'prop';
-        const v = it.values[i];
-        p.innerHTML = '<small></small><span></span>';
-        p.querySelector('small').textContent = name;
-        p.querySelector('span').textContent = Number.isFinite(v) ? v : '–';
-        props.appendChild(p);
-      });
-      li.appendChild(props);
+// --- Resize canvas to its container ---
+function resize() {
+  const { clientWidth: w, clientHeight: h } = viewport;
+  clientManager.sceneController.renderer.setSize(w, h, false);
+  clientManager.sceneController.camera.aspect = w / h;
+  clientManager.sceneController.camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(viewport);
+resize();
 
-      if (kids.length) li.appendChild(buildList(kids));
-      ul.appendChild(li);
-    }
-    return ul;
-  }
+// --- lil-gui as a sidebar ---
+const params = {
+  color: '#4f9dff', wireframe: false, roughness: 0.35, metalness: 0.2,
+  scale: 1, rotationSpeed: 0.4, autoRotate: true,
+  background: '#141418', lightIntensity: 1.2, showGrid: true,
+};
+const gui = new lil.GUI({ container: sidebar, autoPlace: false, title: 'Controls' });
 
-  function render() {
-    // roots = no parent, or parent not (yet) known
-    const roots = [...items.values()].filter(i => i.parent == null || !items.has(i.parent));
-    rootEl.replaceChildren(...buildList(roots).childNodes);
-    emptyEl.style.display = items.size ? 'none' : 'block';
-  }
+const m = gui.addFolder('Material');
+m.addColor(params, 'color').onChange(v => mesh.material.color.set(v));
+m.add(params, 'wireframe').onChange(v => mesh.material.wireframe = v);
+m.add(params, 'roughness', 0, 1).onChange(v => mesh.material.roughness = v);
+m.add(params, 'metalness', 0, 1).onChange(v => mesh.material.metalness = v);
 
-  // ---- User actions (event delegation)
-  rootEl.addEventListener('click', e => {
-    const li = e.target.closest('li');
-    if (!li) return;
-    const id = li.dataset.id;
-    if (e.target.closest('.del')) {
-      removeItem(id);
-      if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'delete', id }));
-      render();
-    } else if (e.target.closest('.exp') || e.target.closest('.label')) {
-      expanded.has(id) ? expanded.delete(id) : expanded.add(id);
-      li.classList.toggle('open');
-    }
-  });
+const o = gui.addFolder('Object');
+o.add(params, 'scale', 0.2, 2.5).onChange(v => mesh.scale.setScalar(v));
+o.add(params, 'autoRotate');
+o.add(params, 'rotationSpeed', 0, 3);
 
-  // ---- Connection
-  const statusEl = document.getElementById('status');
-  const setStatus = on => { statusEl.className = on ? 'on' : ''; statusEl.textContent = on ? 'connected' : 'offline'; };
+const s = gui.addFolder('Scene');
+s.addColor(params, 'background').onChange(v => scene.background.set(v));
+s.add(params, 'lightIntensity', 0, 3).onChange(v => light.intensity = v);
+s.add(params, 'showGrid').onChange(v => grid.visible = v);
 
-  function connect() {
-    ws = new WebSocket(WS_URL);
-    ws.onopen = () => setStatus(true);
-    ws.onmessage = e => { try { handleMessage(JSON.parse(e.data)); } catch (err) { console.error(err); } };
-    ws.onclose = () => { setStatus(false); setTimeout(connect, 2000); };   // auto-reconnect
-    ws.onerror = () => ws.close();
-  }
+// --- Loop ---
+// const clock = new THREE.Clock();
+// renderer.setAnimationLoop(() => {
+//   const dt = clock.getDelta();
+//   if (params.autoRotate) { mesh.rotation.y += dt * params.rotationSpeed; mesh.rotation.x += dt * params.rotationSpeed * 0.5; }
+//   controls.update();
+//   renderer.render(scene, camera);
+// });
 
-  // ---- Demo mode: simulated server messages
-  function demo() {
-    statusEl.textContent = 'demo mode';
-    const r = () => +(Math.random() * 10).toFixed(2);
-    const script = [
-      { type:'add', id:'1', label:'Robot arm', values:[r(),r(),r()] },
-      { type:'add', id:'2', label:'Shoulder joint', values:[r(),r(),r()], parent:'1' },
-      { type:'add', id:'3', label:'Elbow joint', values:[r(),r(),r()], parent:'1' },
-      { type:'add', id:'4', label:'Gripper', values:[r(),r(),r()], parent:'3' },
-      { type:'add', id:'5', label:'Base', values:[r(),r(),r()] },
-      { type:'remove', id:'5' }
-    ];
-    script.forEach((m, i) => setTimeout(() => handleMessage(m), 800 * (i + 1)));
-  }
 
-  // ---- Full screen toggle (the Fullscreen API requires a user tap)
-  const fsBtn = document.getElementById('fs');
-  const root = document.documentElement;
-  const canFs = root.requestFullscreen || root.webkitRequestFullscreen;
-  if (!canFs) fsBtn.style.display = 'none';
-  fsBtn.addEventListener('click', () => {
-    const active = document.fullscreenElement || document.webkitFullscreenElement;
-    if (active) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-    else (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
-  });
-
-  render();
-  WS_URL ? connect() : demo();
-})();
+clientManager.connect(`ws://130.79.90.188`, "3000");
