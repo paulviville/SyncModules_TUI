@@ -62,7 +62,6 @@ export default class TransformGUI extends GUICore {
 
 		RFolder.onChange( ( { property: fixedAxis, value } ) => {
 			const q = normalizeQuaternion( [ rotation.x, rotation.y, rotation.z, rotation.w ], fixedAxis );
-			console.log( q );
 			rotation.x = q[ 0 ];
 			rotation.y = q[ 1 ];
 			rotation.z = q[ 2 ];

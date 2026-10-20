@@ -1,3 +1,4 @@
+import CameraGUI from "./CameraGUI.js";
 import GUICore from "./GUICore.js"
 import PrimitiveGUI from "./PrimitiveGUI.js";
 import ScalarGUI from "./ScalarGUI.js"
@@ -10,6 +11,7 @@ const GUITypes = {
 	[ Vector3GUI.type ]: Vector3GUI,
 	[ TransformGUI.type ]: TransformGUI,
 	[ PrimitiveGUI.type ]: PrimitiveGUI,
+	[ CameraGUI.type ]: CameraGUI,
 };
 
 Object.freeze( GUITypes );
