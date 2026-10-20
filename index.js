@@ -6,6 +6,7 @@ import ClientManager from "./ClientManager.js";
 import GUI from './three/libs/lil-gui.module.min.js';
 import GUICore from './SyncModulesGUI/GUICore.js';
 import GUIRegistry from './SyncModulesGUI/GUIRegistry.js';
+import GUIController from './GUIController.js';
 
 const app = document.getElementById('app');
 const btnFs = document.getElementById('btn-fullscreen');
@@ -42,12 +43,12 @@ new ResizeObserver(resize).observe(viewport);
 resize();
 
 // --- lil-gui as a sidebar ---
-const params = {
-  color: '#4f9dff', wireframe: false, roughness: 0.35, metalness: 0.2,
-  scale: 1, rotationSpeed: 0.4, autoRotate: true,
-  background: '#141418', lightIntensity: 1.2, showGrid: true,
-};
-const gui = new GUI({ container: sidebar, autoPlace: false, title: 'Controls' });
+// const params = {
+//   color: '#4f9dff', wireframe: false, roughness: 0.35, metalness: 0.2,
+//   scale: 1, rotationSpeed: 0.4, autoRotate: true,
+//   background: '#141418', lightIntensity: 1.2, showGrid: true,
+// };
+// const gui = new GUI({ container: sidebar, autoPlace: false, title: 'Controls' });
 
 // const m = gui.addFolder('Material');
 // m.addColor(params, 'color').onChange(v => mesh.material.color.set(v));
@@ -65,16 +66,9 @@ const gui = new GUI({ container: sidebar, autoPlace: false, title: 'Controls' })
 // s.add(params, 'lightIntensity', 0, 3).onChange(v => light.intensity = v);
 // s.add(params, 'showGrid').onChange(v => grid.visible = v);
 
-// const t = s.addFolder("test")
-// const u = t.addFolder("test2")
-// const u0 = u.addFolder("test3")
 
-
-// const guiCore = new GUICore( clientManager.modulesRegistry, gui, ( module ) => {
-// 	console.log( `delete ${ module.type }` );
-// } );
-
-const guiRegistry = new GUIRegistry( clientManager.modulesRegistry, gui );
+const guiController = new GUIController( );
+guiController.modulesRegistry = clientManager.modulesRegistry;
 
 
 clientManager.connect(`ws://130.79.90.188`, "3000");

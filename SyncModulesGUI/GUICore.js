@@ -6,7 +6,10 @@ export default class GUICore {
 	static type = ModuleCore.type;
 
 	#module; 
-	#folder; 
+	#folder;
+	#guiParams = {
+
+	}
 
 	constructor ( module, parent, onDelete ) {
 		this.#module = module;
@@ -26,6 +29,10 @@ export default class GUICore {
 
 	get folder ( ) {
 		return this.#folder;
+	}
+
+	get params ( ) {
+		return this.#guiParams;
 	}
 
 	/// overload in children

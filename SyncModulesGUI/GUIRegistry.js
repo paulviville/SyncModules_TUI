@@ -41,9 +41,12 @@ export default class GUIRegistry extends GUICore {
 			this.folder,
 			( ) => { this.module.removeModule( module.UUID, true ) } 
 		);
-		
+		// gui.folder.onOpenClose( changedGui => {
+		// 	console.log( changedGui._closed );
+		// } );
+		// gui.folder.hide()
+		// gui.folder.show()
 
-		// this.add( view );
 		this.#guis.set( UUID, gui );
 
 		return gui;

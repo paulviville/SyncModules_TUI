@@ -75,12 +75,12 @@ export default class ClientManager {
 			if ( type != "PrimitiveModule" && type != "GLTFModule" )
 				return;
 
-			const module = this.#modulesRegistry.getModule( UUID );
-			if ( type == "PrimitiveModule" ) 
-				this.#sceneController.addPrimitive( module );
-			if ( type == "GLTFModule" ) {
-				this.#sceneController.addObject( module );
-			}
+			// const module = this.#modulesRegistry.getModule( UUID );
+			// if ( type == "PrimitiveModule" ) 
+			// 	this.#sceneController.addPrimitive( module );
+			// if ( type == "GLTFModule" ) {
+			// 	this.#sceneController.addObject( module );
+			// }
 		} );
 		this.#modulesRegistry.setOnChange( this.#modulesRegistry.commands.removeModule, ( moduleData ) => {
 			const { type, UUID } = moduleData;
