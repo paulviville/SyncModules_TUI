@@ -4,8 +4,8 @@ import TransformGUI from './TransformGUI.js';
 export default class PrimitiveGUI extends TransformGUI {
 	static type = PrimitiveModule.type;
 
-	constructor ( module, parent, onDelete ) {
-		super( module, parent, onDelete );
+	constructor ( module, parent ) {
+		super( module, parent );
 
 		const primitiveTypes = Object.keys( module.primitiveTypes );
 		const primitiveType = { primitive: primitiveTypes[ 0 ] };

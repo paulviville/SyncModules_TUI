@@ -7,11 +7,18 @@ export default class GUIRegistry extends GUICore {
 
 	#guis = new Map( );
 
-	constructor ( module, parent ) {
+	constructor ( registry, parent ) {
 
-		super( module, parent );
+		super( registry, parent );
 
 		this.folder.open( ); 
+
+		for ( const [ _, mod ] of registry.modules ) {
+			if ( mod == registry ) {
+				continue;
+			}
+			this.#addModuleGUI( mod );
+		}
 	}
 
 	setCallbacks ( ) {
@@ -39,8 +46,8 @@ export default class GUIRegistry extends GUICore {
 		const gui = new constructor(
 			module,
 			this.folder,
-			( ) => { this.module.removeModule( module.UUID, true ) } 
 		);
+		gui.onDelete = ( ) => { this.module.removeModule( module.UUID, true ) };
 		// gui.folder.onOpenClose( changedGui => {
 		// 	console.log( changedGui._closed );
 		// } );

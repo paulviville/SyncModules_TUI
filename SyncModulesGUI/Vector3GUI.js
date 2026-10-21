@@ -4,8 +4,8 @@ import Vector3Module from '../SyncModules/Vector3Module.js';
 export default class Vector3GUI extends GUICore {
 	static type = Vector3Module.type;
 	
-	constructor ( module, parent, onDelete ) {
-		super( module, parent, onDelete );
+	constructor ( module, parent ) {
+		super( module, parent );
 
 		this.params.vector = { x: 0, y: 0, z: 0 };
 

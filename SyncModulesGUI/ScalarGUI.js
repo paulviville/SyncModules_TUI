@@ -4,8 +4,8 @@ import ScalarModule from '../SyncModules/ScalarModule.js';
 export default class ScalarGUI extends GUICore {
 	static type = ScalarModule.type;
 	
-	constructor ( module, parent, onDelete ) {
-		super( module, parent, onDelete );
+	constructor ( module, parent ) {
+		super( module, parent );
 
 		this.params.value = 0.0;
 

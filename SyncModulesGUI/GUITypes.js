@@ -2,7 +2,9 @@ import CameraGUI from "./CameraGUI.js";
 import GUICore from "./GUICore.js"
 import PrimitiveGUI from "./PrimitiveGUI.js";
 import ScalarGUI from "./ScalarGUI.js"
+import SwitchGUI from "./SwitchGUI.js";
 import TransformGUI from "./TransformGUI.js";
+import TriggerGUI from "./TriggerGui.js";
 import Vector3GUI from "./Vector3GUI.js";
 
 const GUITypes = {
@@ -12,6 +14,8 @@ const GUITypes = {
 	[ TransformGUI.type ]: TransformGUI,
 	[ PrimitiveGUI.type ]: PrimitiveGUI,
 	[ CameraGUI.type ]: CameraGUI,
+	[ TriggerGUI.type ]: TriggerGUI,
+	[ SwitchGUI.type ]: SwitchGUI,
 };
 
 Object.freeze( GUITypes );

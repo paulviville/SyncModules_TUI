@@ -10,14 +10,11 @@ export default class GUICore {
 	#guiParams = {
 
 	}
+	#deleteController;
 
-	constructor ( module, parent, onDelete ) {
+	constructor ( module, parent  ) {
 		this.#module = module;
 		this.#folder = parent.addFolder( `${ module.type } - ${ module.UUID }` );
-
-		if ( onDelete ) {
-			this.#folder.add( { delete: onDelete }, "delete" );
-		}
 
 		this.setCallbacks( );
 		// this.#folder.close( );
@@ -40,6 +37,14 @@ export default class GUICore {
 		this.#module = module;
 		
 		this.setCallbacks( );
+	}
+
+	get onDelete ( ) {
+		//return on
+	} 
+
+	set onDelete ( onDelete ) {
+		this.#deleteController = this.#folder.add( { delete: onDelete }, "delete" );
 	}
 
 	/// overload in children

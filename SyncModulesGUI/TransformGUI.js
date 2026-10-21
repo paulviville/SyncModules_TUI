@@ -34,8 +34,8 @@ function normalizeQuaternion( q, fixedAxis ) {
 export default class TransformGUI extends GUICore {
 	static type = TransformModule.type;
 	
-	constructor ( module, parent, onDelete ) {
-		super( module, parent, onDelete );
+	constructor ( module, parent ) {
+		super( module, parent );
 
 		const { translation: T, rotation: R, scale: S } = module.transform;
 		const translation = { x: T[ 0 ], y: T[ 1 ], z: T[ 2 ] };
