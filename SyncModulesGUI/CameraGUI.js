@@ -4,8 +4,8 @@ import CameraModule from "../SyncModules/CameraModule.js";
 export default class CameraGUI extends TransformGUI {
 	static type = "CameraModule";
 	
-	constructor ( module, parent, onDelete ) {
-		super( module, parent, onDelete );
+	constructor ( module, parent ) {
+		super( module, parent );
 
 		this.params.fov = 50;
 		this.params.aspect = 4/3;

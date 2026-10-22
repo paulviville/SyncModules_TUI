@@ -8,13 +8,10 @@ export default class PrimitiveGUI extends TransformGUI {
 		super( module, parent );
 
 		const primitiveTypes = Object.keys( module.primitiveTypes );
-		const primitiveType = { primitive: primitiveTypes[ 0 ] };
 
 		this.params.primitive = module.primitive;
 		const color = module.color;
-		console.log( "primitive color", color )
 		this.params.color = color.slice( 0, 3 );
-		console.log( this.params.color )
 		this.params.alpha = color[ 3 ];
 
 		const primitiveFolder = this.folder.addFolder( "Primitive" );
@@ -44,11 +41,8 @@ export default class PrimitiveGUI extends TransformGUI {
 	}
 
 	#updateColor ( color ) {
-		console.log( color )
 		this.params.color.forEach( ( _, i ) => this.params.color[ i ] = color[ i ] || 0 * 255 );
 		this.params.alpha = color[ 3 ];
-
-		console.log( this.params.color, this.params.alpha )
 	}
 
 	#controlPrimitive ( primitive ) {
@@ -56,7 +50,6 @@ export default class PrimitiveGUI extends TransformGUI {
 	}
 
 	#controlColor ( color, alpha ) {
-		console.log( [ ...color, alpha ] )
 		this.module.updateColor( [ ...color, alpha ], true );
 	}
 }

@@ -7,6 +7,7 @@ import GUI from './three/libs/lil-gui.module.min.js';
 import GUICore from './SyncModulesGUI/GUICore.js';
 import GUIRegistry from './SyncModulesGUI/GUIRegistry.js';
 import GUIController from './GUIController.js';
+import ImageImportController from './SyncModulesViews/Controllers/ImageImportController.js';
 
 const app = document.getElementById('app');
 const btnFs = document.getElementById('btn-fullscreen');
@@ -70,6 +71,22 @@ resize();
 const guiController = new GUIController( );
 guiController.modulesRegistry = clientManager.modulesRegistry;
 
+
+window.testImageModule = ( x = 0, y = 0, z = 0 ) => {
+	const imageModule = clientManager.addModule(
+		"ImageModule",
+		true,
+		true,
+		true,
+	);
+
+
+	const imageImportController = new ImageImportController( );
+	imageImportController.setModule( imageModule );
+	imageImportController.inputFile( );
+
+	imageModule.updateTransform( { translation: [ x, y, z] }, true );
+}
 
 clientManager.connect(`ws://127.0.0.1`, "3000");
 //clientManager.connect( "wss://icos.univ-reims.fr", "443" );

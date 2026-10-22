@@ -8,7 +8,7 @@ export default class SwitchGUI extends GUICore {
 	constructor ( module, parent ) {
 		super ( module, parent );
 
-		this.params.value = false; 
+		this.params.value = module.value; 
 		this.folder.add( this.params, "value" )
 		.onChange( this.#controlToggle.bind( this ) )
 		.listen( );

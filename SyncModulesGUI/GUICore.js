@@ -14,7 +14,7 @@ export default class GUICore {
 
 	constructor ( module, parent  ) {
 		this.#module = module;
-		this.#folder = parent.addFolder( `${ module.type } - ${ module.UUID }` );
+		this.#folder = parent.addFolder( `${ module.type } \n- ${ module.UUID }` );
 
 		this.setCallbacks( );
 		// this.#folder.close( );
