@@ -23,6 +23,10 @@ export default class ClientNetwork {
         this.#socket.onclose = ( event ) => { this.#handleOnClose( event ); };
 	}
 
+	disconnect ( ) {
+		this.#socket.close( );
+	}
+
 	#handleOnOpen ( ) {
 		console.log( `ClientNetwork - #handleOnOpen` );
 

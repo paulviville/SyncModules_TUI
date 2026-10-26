@@ -32,17 +32,36 @@ export default class GUIController {
 	#panels = {
 
 	}
+	#connection = {
+		folder: undefined,
+		controllers: {
+
+		},
+		url: "wss://icos.univ-reims.fr",
+		port: "443",
+		connect: ( ) => { this.#handleConnection( ) },
+		disconnect: ( ) => { this.#handleDisconnection( ) },
+	}
+	#networkCallbacks = { };
 
 	constructor ( ) {
 		console.log( `GUIController - constructor` );
 		
-		this.#addConnectionFolder( );
+		this.#addConnectionPanel( );
 
 	}
 
-	#addConnectionFolder ( ) {
-		this.#panels.Connection = this.#gui.addFolder( "Connection Controls");
-		this.#panels.Connection.close( );
+	#addConnectionPanel ( ) {
+		this.#connection.folder = this.#gui.addFolder( "Connection Controls");
+		this.#connection.folder.add( this.#connection, "url" );
+		this.#connection.folder.add( this.#connection, "port" );
+		const connectController = this.#connection.folder.add( this.#connection, "connect" );
+		const disconnectController = this.#connection.folder.add( this.#connection, "disconnect" );
+		connectController.listen( );
+		disconnectController.listen( );
+		this.#connection.controllers.connect = connectController;
+		this.#connection.controllers.disconnect = disconnectController;
+		// this.Connection.close( );
 	}
 	
 	#addModulesPanel ( ) {
@@ -63,6 +82,8 @@ export default class GUIController {
 		// this.#panels.modulesControls.close( );
 	}
 
+
+
 	get gui ( ) {
 		return this.#gui;
 	}
@@ -73,5 +94,19 @@ export default class GUIController {
 		this.#addModulesControlPanel( );
 
 		this.#guiRegistry = new GUIRegistry( modulesRegistry, this.gui );
+	}
+
+	setNetworkCallbacks ( connectFn, disconnectFn ) {
+		this.#networkCallbacks.connect = connectFn;
+		this.#networkCallbacks.disconnect = disconnectFn;
+	}
+
+	#handleConnection ( ) {
+		console.log( "connecting to ", this.#connection.url, this.#connection.port )
+		this.#networkCallbacks?.connect( this.#connection.url, this.#connection.port );
+	}
+
+	#handleDisconnection (  ) {
+		this.#networkCallbacks?.disconnect( );
 	}
 }

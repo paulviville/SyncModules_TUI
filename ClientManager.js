@@ -177,6 +177,10 @@ export default class ClientManager {
 		this.#clientNetwork.connect( url, port );
 	}
 
+	disconnect ( ) {
+		this.#clientNetwork.disconnect( );
+	}
+
 	/// Debug
 	get clientNetwork ( ) {
 		return this.#clientNetwork;
