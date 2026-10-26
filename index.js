@@ -88,6 +88,8 @@ window.testImageModule = ( x = 0, y = 0, z = 0 ) => {
 	imageModule.updateTransform( { translation: [ x, y, z] }, true );
 }
 
-clientManager.connect(`ws://127.0.0.1`, "3000");
-//clientManager.connect( "wss://icos.univ-reims.fr", "443" );
+// clientManager.connect(`ws://127.0.0.1`, "3000");
+// clientManager.connect(`ws://130.79.90.188`, "3000");
+
+clientManager.connect( "wss://icos.univ-reims.fr", "443" );
 window.addEventListener("beforeunload", (event) => { clientManager.beforeUnload( event ) } );
