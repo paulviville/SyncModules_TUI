@@ -39,6 +39,8 @@ export default class GUIController {
 		},
 		url: "wss://icos.univ-reims.fr",
 		port: "443",
+		// url: "ws://localhost",
+		// port: "3000",
 		connect: ( ) => { this.#handleConnection( ) },
 		disconnect: ( ) => { this.#handleDisconnection( ) },
 	}
@@ -61,7 +63,6 @@ export default class GUIController {
 		disconnectController.listen( );
 		this.#connection.controllers.connect = connectController;
 		this.#connection.controllers.disconnect = disconnectController;
-		// this.Connection.close( );
 	}
 	
 	#addModulesPanel ( ) {
