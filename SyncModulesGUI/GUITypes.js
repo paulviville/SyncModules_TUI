@@ -1,5 +1,6 @@
 import CameraGUI from "./CameraGUI.js";
 import GUICore from "./GUICore.js"
+import Image360GUI from "./Image360GUI.js";
 import ImageGUI from "./ImageGUI.js";
 import PrimitiveGUI from "./PrimitiveGUI.js";
 import ScalarGUI from "./ScalarGUI.js"
@@ -20,6 +21,7 @@ const GUITypes = {
 	[ SwitchGUI.type ]: SwitchGUI,
 	[ TextGUI.type ]: TextGUI,
 	[ ImageGUI.type ]: ImageGUI,
+	[ Image360GUI.type ]: Image360GUI,
 };
 
 Object.freeze( GUITypes );
