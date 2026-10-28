@@ -1,8 +1,11 @@
+import AmbientLightGUI from "./AmbientLightGUI.js";
 import CameraGUI from "./CameraGUI.js";
 import GUICore from "./GUICore.js"
 import Image360GUI from "./Image360GUI.js";
 import ImageGUI from "./ImageGUI.js";
+import LightGUI from "./LightGUI.js";
 import LineGUI from "./LineGUI.js";
+import PointLightGUI from "./PointLightGUI.js";
 import PrimitiveGUI from "./PrimitiveGUI.js";
 import ScalarGUI from "./ScalarGUI.js"
 import SwitchGUI from "./SwitchGUI.js";
@@ -26,6 +29,9 @@ const GUITypes = {
 	[ Image360GUI.type ]: Image360GUI,
 	[ LineGUI.type ]: LineGUI,
 	[ TextLogGUI.type ]: TextLogGUI,
+	// [ LightGUI.type ]: LightGUI,
+	[ PointLightGUI.type ]: PointLightGUI,
+	[ AmbientLightGUI.type ]: AmbientLightGUI,
 };
 
 Object.freeze( GUITypes );
