@@ -1,6 +1,7 @@
 import AmbientLightGUI from "./AmbientLightGUI.js";
 import CameraGUI from "./CameraGUI.js";
 import DirectionalLightGUI from "./DirectionalLightGUI.js";
+import GLTFGUI from "./GLTFGUI.js";
 import GUICore from "./GUICore.js"
 import Image360GUI from "./Image360GUI.js";
 import ImageGUI from "./ImageGUI.js";
@@ -36,6 +37,7 @@ const GUITypes = {
 	[ AmbientLightGUI.type ]: AmbientLightGUI,
 	[ SpotLightGUI.type ]: SpotLightGUI,
 	[ DirectionalLightGUI.type ]: DirectionalLightGUI,
+	[ GLTFGUI.type ]: GLTFGUI,
 };
 console.log( SpotLightGUI.type )
 Object.freeze( GUITypes );
