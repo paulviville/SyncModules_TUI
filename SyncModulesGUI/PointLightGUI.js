@@ -10,9 +10,9 @@ export default class PointLightGUI extends LightGUI {
 		this.params.distance = module.distance;
 		this.params.decay = module.decay;
 
-		const pointFolder = this.folder.addFolder( "Point" );
-		const decayParam = pointFolder.add( this.params, "decay", 0, 100, 0.01 ).listen( );
-		const distanceParam = pointFolder.add( this.params, "distance", 0, 100, 0.01 ).listen( );
+		// const pointFolder = this.folder.addFolder( "Point" );
+		const decayParam = this.lightFolder.add( this.params, "decay", 0, 100, 0.01 ).listen( );
+		const distanceParam = this.lightFolder.add( this.params, "distance", 0, 100, 0.01 ).listen( );
 
 		decayParam.onChange( ( ) => { this.#controlDecay( this.params.decay ) } );
 		distanceParam.onChange( ( ) => { this.#controlDistance( this.params.distance ) } );

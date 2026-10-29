@@ -4,15 +4,17 @@ import TransformGUI from './TransformGUI.js';
 export default class LightGUI extends TransformGUI {
 	static type = LightModule.type;
 
+	lightFolder;
+
 	constructor ( module, parent ) {
 		super( module, parent );
 
 		this.params.intensity = module.intensity;
 		this.params.color = module.color.slice( 0, 3 );
 
-		const lightFolder = this.folder.addFolder( "Light" );
-		const colorParam = lightFolder.addColor( this.params, "color" ).listen( );
-		const intensityParam = lightFolder.add( this.params, "intensity", 0, 100, 0.01 ).listen( );
+		this.lightFolder = this.folder.addFolder( "Light" );
+		const colorParam = this.lightFolder.addColor( this.params, "color" ).listen( );
+		const intensityParam = this.lightFolder.add( this.params, "intensity", 0, 100, 0.01 ).listen( );
 
 		colorParam.onChange( ( ) => { this.#controlColor( this.params.color ) } );
 		intensityParam.onChange( ( ) => { this.#controlIntensity( this.params.intensity ) } );

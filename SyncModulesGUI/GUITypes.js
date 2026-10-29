@@ -1,5 +1,6 @@
 import AmbientLightGUI from "./AmbientLightGUI.js";
 import CameraGUI from "./CameraGUI.js";
+import DirectionalLightGUI from "./DirectionalLightGUI.js";
 import GUICore from "./GUICore.js"
 import Image360GUI from "./Image360GUI.js";
 import ImageGUI from "./ImageGUI.js";
@@ -8,6 +9,7 @@ import LineGUI from "./LineGUI.js";
 import PointLightGUI from "./PointLightGUI.js";
 import PrimitiveGUI from "./PrimitiveGUI.js";
 import ScalarGUI from "./ScalarGUI.js"
+import SpotLightGUI from "./SpotLightGUI.js";
 import SwitchGUI from "./SwitchGUI.js";
 import TextGUI from "./TextGUI.js";
 import TextLogGUI from "./TextLogGUI.js";
@@ -32,8 +34,10 @@ const GUITypes = {
 	// [ LightGUI.type ]: LightGUI,
 	[ PointLightGUI.type ]: PointLightGUI,
 	[ AmbientLightGUI.type ]: AmbientLightGUI,
+	[ SpotLightGUI.type ]: SpotLightGUI,
+	[ DirectionalLightGUI.type ]: DirectionalLightGUI,
 };
-
+console.log( SpotLightGUI.type )
 Object.freeze( GUITypes );
 export default GUITypes;
 
