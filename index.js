@@ -8,6 +8,7 @@ import GUICore from './SyncModulesGUI/GUICore.js';
 import GUIRegistry from './SyncModulesGUI/GUIRegistry.js';
 import GUIController from './GUIController.js';
 import ImageImportController from './SyncModulesViews/Controllers/ImageImportController.js';
+import uuid from './uuid.js';
 
 // const app = document.getElementById('app');
 // const btnFs = document.getElementById('btn-fullscreen');
@@ -105,24 +106,55 @@ const guiController = new GUIController( );
 guiController.modulesRegistry = clientManager.modulesRegistry;
 
 
-window.testImageModule = ( x = 0, y = 0, z = 0 ) => {
-	const imageModule = clientManager.addModule(
-		"ImageModule",
-		true,
-		true,
-		true,
-	);
+//window.testImageModule = ( x = 0, y = 0, z = 0 ) => {
+//	const imageModule = clientManager.addModule(
+//		"ImageModule",
+//		true,
+//		true,
+//		true,
+//	);
 
 
-	const imageImportController = new ImageImportController( );
-	imageImportController.setModule( imageModule );
-	imageImportController.inputFile( );
+//	const imageImportController = new ImageImportController( );
+//	imageImportController.setModule( imageModule );
+//	imageImportController.inputFile( );
 
-	imageModule.updateTransform( { translation: [ x, y, z] }, true );
-}
+//	imageModule.updateTransform( { translation: [ x, y, z] }, true );
+//}
 
 // clientManager.connect(`ws://127.0.0.1`, "3000");
 // clientManager.connect(`ws://130.79.90.188`, "3000");
+
+function runTestObjectModule ( ) {
+  const registry = clientManager.modulesRegistry;
+  const objectModule = registry.addModule( "ObjectModule", uuid( ), true );
+  console.log( objectModule );
+
+  const obj1 = registry.addModule( "ObjectModule", uuid( ), true );
+  const obj2 = registry.addModule( "ObjectModule", uuid( ), true );
+  const obj3 = registry.addModule( "ObjectModule", uuid( ), true );
+  const obj4 = registry.addModule( "ObjectModule", uuid( ), true );
+  const cam = registry.addModule( "CameraModule", uuid( ), true );
+
+  objectModule.addChildren( [ obj1.UUID ], true );
+  console.log( objectModule.children );
+  objectModule.addChildren( [ objectModule.UUID ], true );
+  console.log( objectModule.children );
+  objectModule.addChildren( [ obj1.UUID ], true );
+  console.log( objectModule.children );
+  objectModule.addChildren( [ cam.UUID ], true );
+  console.log( objectModule.children );
+  objectModule.addChildren( [ obj2.UUID ], true );
+  console.log( objectModule.children );
+  obj2.addChildren( [ obj3.UUID, obj4.UUID ], true );
+  console.log( objectModule.children );
+  console.log( obj2.children );
+  obj2.removeChildren( [ obj4.UUID ], true );
+  obj1.addChildren( [ obj4.UUID ], true );
+
+}
+
+window.runTestObjectModule = runTestObjectModule;
 
 guiController.setNetworkCallbacks(
 	( url, port ) => {
