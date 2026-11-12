@@ -8,6 +8,7 @@ import ImageGUI from "./ImageGUI.js";
 import LightGUI from "./LightGUI.js";
 import LineGUI from "./LineGUI.js";
 import ObjectGUI from "./ObjectGUI.js";
+import OPrimitiveGUI from "./OPrimitiveGUI.js";
 import PointLightGUI from "./PointLightGUI.js";
 import PrimitiveGUI from "./PrimitiveGUI.js";
 import ScalarGUI from "./ScalarGUI.js"
@@ -40,6 +41,7 @@ const GUITypes = {
 	[ DirectionalLightGUI.type ]: DirectionalLightGUI,
 	[ GLTFGUI.type ]: GLTFGUI,
 	[ ObjectGUI.type ]: ObjectGUI,
+	[ OPrimitiveGUI.type ]: OPrimitiveGUI,
 };
 console.log( SpotLightGUI.type )
 Object.freeze( GUITypes );

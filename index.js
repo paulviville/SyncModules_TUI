@@ -131,26 +131,38 @@ function runTestObjectModule ( ) {
   console.log( objectModule );
 
   const obj1 = registry.addModule( "ObjectModule", uuid( ), true );
-  const obj2 = registry.addModule( "ObjectModule", uuid( ), true );
-  const obj3 = registry.addModule( "ObjectModule", uuid( ), true );
-  const obj4 = registry.addModule( "ObjectModule", uuid( ), true );
-  const cam = registry.addModule( "CameraModule", uuid( ), true );
+  const dl0 = registry.addModule( "DirectionalLightModule", uuid( ), true );
 
   objectModule.addChildren( [ obj1.UUID ], true );
   console.log( objectModule.children );
-  objectModule.addChildren( [ objectModule.UUID ], true );
-  console.log( objectModule.children );
-  objectModule.addChildren( [ obj1.UUID ], true );
-  console.log( objectModule.children );
-  objectModule.addChildren( [ cam.UUID ], true );
-  console.log( objectModule.children );
-  objectModule.addChildren( [ obj2.UUID ], true );
-  console.log( objectModule.children );
-  obj2.addChildren( [ obj3.UUID, obj4.UUID ], true );
-  console.log( objectModule.children );
-  console.log( obj2.children );
-  obj2.removeChildren( [ obj4.UUID ], true );
-  obj1.addChildren( [ obj4.UUID ], true );
+  //objectModule.addChildren( [ pl0.UUID ], true );
+  objectModule.addChildren( [ dl0.UUID ], true );
+  //console.log(pl0.children)
+
+  const p0 = registry.addModule( "OPrimitiveModule", uuid( ), true );
+  const p1 = registry.addModule( "OPrimitiveModule", uuid( ), true );
+  const p2 = registry.addModule( "OPrimitiveModule", uuid( ), true );
+  const p3 = registry.addModule( "OPrimitiveModule", uuid( ), true );
+
+  objectModule.addChildren( [ p0.UUID ], true );
+  objectModule.addChildren( [ p1.UUID ], true );
+  p1.addChildren( [ p2.UUID ], true );
+  p1.addChildren( [ p3.UUID ], true );
+
+
+  //objectModule.addChildren( [ objectModule.UUID ], true );
+  //console.log( objectModule.children );
+  //objectModule.addChildren( [ obj1.UUID ], true );
+  //console.log( objectModule.children );
+  //objectModule.addChildren( [ cam.UUID ], true );
+  //console.log( objectModule.children );
+  //objectModule.addChildren( [ obj2.UUID ], true );
+  //console.log( objectModule.children );
+  //obj2.addChildren( [ obj3.UUID, obj4.UUID ], true );
+  //console.log( objectModule.children );
+  //console.log( obj2.children );
+  //obj2.removeChildren( [ obj4.UUID ], true );
+  //obj1.addChildren( [ obj4.UUID ], true );
 
 }
 
