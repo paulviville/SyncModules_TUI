@@ -7,6 +7,7 @@ import Image360GUI from "./Image360GUI.js";
 import ImageGUI from "./ImageGUI.js";
 import LightGUI from "./LightGUI.js";
 import LineGUI from "./LineGUI.js";
+import MeshGUI from "./MeshGUI.js";
 import ObjectGUI from "./ObjectGUI.js";
 import OPrimitiveGUI from "./OPrimitiveGUI.js";
 import PointLightGUI from "./PointLightGUI.js";
@@ -42,6 +43,7 @@ const GUITypes = {
 	[ GLTFGUI.type ]: GLTFGUI,
 	[ ObjectGUI.type ]: ObjectGUI,
 	[ OPrimitiveGUI.type ]: OPrimitiveGUI,
+	[ MeshGUI.type ]: MeshGUI,
 };
 console.log( SpotLightGUI.type )
 Object.freeze( GUITypes );
